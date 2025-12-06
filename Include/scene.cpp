@@ -48,6 +48,8 @@ Scene parseSceneFile(const std::string &filename,
 
     scene.materials.push_back(defaultMat);
     int currentMatId = 0;
+    int max_vertices = 0;
+    int max_normals  = 0;
 
     std::ifstream in(filename);
     if (!in) {
@@ -113,8 +115,59 @@ Scene parseSceneFile(const std::string &filename,
             s.radius      = r;
             s.material_id = currentMatId;
             scene.spheres.push_back(s);
+        } else if (key == "max_vertices") {
+            ss >> max_vertices;
+            if (max_vertices < 0) max_vertices = 0;
+            scene.vertices.reserve(max_vertices);
+        } else if (key == "max_normals") {
+            ss >> max_normals;
+            if (max_normals < 0) max_normals = 0;
+            scene.normals.reserve(max_normals);
+        } else if (key == "vertex") {
+            float x, y, z;
+            ss >> x >> y >> z;
+            if (max_vertices > 0 &&
+                (int)scene.vertices.size() >= max_vertices) {
+                std::cerr << "Warning: more vertices than max_vertices in "
+                          << filename << std::endl;
+            }
+            scene.vertices.push_back(vec3(x, y, z));
+        } else if (key == "normal") {
+            float x, y, z;
+            ss >> x >> y >> z;
+            if (max_normals > 0 &&
+                (int)scene.normals.size() >= max_normals) {
+                std::cerr << "Warning: more normals than max_normals in "
+                          << filename << std::endl;
+            }
+            scene.normals.push_back(vec3(x, y, z));
+        } else if (key == "triangle") {
+            int v0, v1, v2;
+            ss >> v0 >> v1 >> v2;
+            Triangle t;
+            t.v[0] = v0;
+            t.v[1] = v1;
+            t.v[2] = v2;
+            t.n[0] = t.n[1] = t.n[2] = -1;
+            t.material_id   = currentMatId;
+            t.has_vertex_normals = false;
+            scene.triangles.push_back(t);
+        } else if (key == "normal_triangle") {
+            int v0, v1, v2, n0, n1, n2;
+            ss >> v0 >> v1 >> v2 >> n0 >> n1 >> n2;
+            Triangle t;
+            t.v[0] = v0;
+            t.v[1] = v1;
+            t.v[2] = v2;
+            t.n[0] = n0;
+            t.n[1] = n1;
+            t.n[2] = n2;
+            t.material_id   = currentMatId;
+            t.has_vertex_normals = true;
+            scene.triangles.push_back(t);
         } else {
             // Other keys (vertex, triangle, lights, etc.) are left for teammates
+            // Chandan's Comment : Updated Triange and Normalized Triangle Part
         }
     }
 

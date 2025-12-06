@@ -19,6 +19,13 @@ struct Sphere {
     int  material_id;   // index into Scene::materials
 };
 
+struct Triangle {
+    int v[3];                // indices for vertices
+    int n[3];                // indices for normals
+    int material_id;         // index for materials
+    bool has_vertex_normals;
+};
+
 struct Scene {
     // Camera parameters
     vec3  camera_pos;
@@ -33,6 +40,11 @@ struct Scene {
     // Geometry and materials
     std::vector<Material> materials;
     std::vector<Sphere>   spheres;
+
+    // Triangle mesh data
+    std::vector<vec3>     vertices;
+    std::vector<vec3>     normals;
+    std::vector<Triangle> triangles;
 };
 
 // Parses the scene file, fills a Scene, and also sets output image size & name.
