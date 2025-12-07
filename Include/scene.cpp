@@ -1,6 +1,5 @@
 #include "scene.h"
 
-#include "types.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -16,18 +15,26 @@ static inline void trimInPlace(std::string &s) {
     size_t e = s.find_last_not_of(" \t\r\n");
     s = s.substr(b, e - b + 1);
 }
-Normal3 Sphere::get_normal_at_point(const Point3 &p) const {
-    Normal3 n = p - center;               
-    float len = std::sqrt(n.x * n.x +
-                          n.y * n.y +
-                          n.z * n.z);
-    if (len > 0.0f) {
-        n.x /= len;
-        n.y /= len;
-        n.z /= len;
+
+Direction3 Sphere::get_normal_at_point(const Point3 &p) const {
+    // 向量 p - center
+    vec3 n = p - center;
+
+    // 手动做归一化
+    float len2 = n.x * n.x + n.y * n.y + n.z * n.z;
+    if (len2 > 0.0f) {
+        float invLen = 1.0f / std::sqrt(len2);
+        n.x *= invLen;
+        n.y *= invLen;
+        n.z *= invLen;
     }
-    return n;
+
+    // 用 Direction3 包一层返回
+    return Direction3(n);
 }
+
+
+
 
 Scene parseSceneFile(const std::string &filename,
                      int &img_width,

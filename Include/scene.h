@@ -1,9 +1,10 @@
 #pragma once
 
-#include "types.h"
 #include <vector>
 #include <string>
+#include "types.h"
 
+// ----------------- Material -----------------
 struct Material {
     Color3 ambient;   // ar, ag, ab
     Color3 diffuse;   // dr, dg, db
@@ -12,21 +13,26 @@ struct Material {
     Color3 trans;     // tr, tg, tb
     float  ior;       // index of refraction
 };
-struct Triangle {
-    int  v[3];               // indices into Scene::vertices
-    int  n[3];               // indices into Scene::normals (or -1 if none)
-    int  material_id;        // which material to use
-    bool has_vertex_normals; // true if n[] are valid
-};
+
+// ----------------- Sphere -----------------
 struct Sphere {
-    Point3 center;
-    float  radius;
-    int    material_id;
+    Point3    center;
+    float     radius;
+    int       material_id;   // index into Scene::materials
 
-    // NEW method to get normal at a point on the sphere surface
-    Normal3 get_normal_at_point(const Point3 &p) const;
+    // normal at a point on the surface
+    Direction3 get_normal_at_point(const Point3 &p) const;
 };
 
+// ----------------- Triangle -----------------
+struct Triangle {
+    int v[3];   // indices into Scene::vertices
+    int n[3];   // indices into Scene::normals (or -1 if none)
+    int  material_id;
+    bool has_vertex_normals;
+};
+
+// ----------------- Scene -----------------
 struct Scene {
     // camera
     Point3     camera_pos;
@@ -38,16 +44,17 @@ struct Scene {
     Color3 background;
     Color3 ambient_light;
 
+    // materials & primitives
     std::vector<Material> materials;
     std::vector<Sphere>   spheres;
 
-    std::vector<Point3>   vertices;  
-    std::vector<Normal3>  normals;   // same
-    std::vector<Triangle> triangles;
+    // triangle data
+    std::vector<Point3>     vertices;  // positions
+    std::vector<Direction3> normals;   // per-vertex normals
+    std::vector<Triangle>   triangles;
 };
 
-
-// Parses the scene file, fills a Scene, and also sets output image size & name.
+// parse scene file and fill scene + output image info
 Scene parseSceneFile(const std::string &filename,
                      int &img_width,
                      int &img_height,
