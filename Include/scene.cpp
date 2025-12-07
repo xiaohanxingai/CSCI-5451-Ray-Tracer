@@ -17,10 +17,8 @@ static inline void trimInPlace(std::string &s) {
 }
 
 Direction3 Sphere::get_normal_at_point(const Point3 &p) const {
-    // 向量 p - center
     vec3 n = p - center;
 
-    // 手动做归一化
     float len2 = n.x * n.x + n.y * n.y + n.z * n.z;
     if (len2 > 0.0f) {
         float invLen = 1.0f / std::sqrt(len2);
@@ -29,7 +27,6 @@ Direction3 Sphere::get_normal_at_point(const Point3 &p) const {
         n.z *= invLen;
     }
 
-    // 用 Direction3 包一层返回
     return Direction3(n);
 }
 
