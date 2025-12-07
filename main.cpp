@@ -11,17 +11,15 @@
 #include "Include/vec3.h"
 #include "Include/scene.h"
 #include "Include/ray.h"
-#include "Include/camera.h"
 #include "Include/intersect.h"
-
+#include "Include/lighting.h"
 
 #include <iostream>
 #include <string>
 
-int img_width, img_height;
-std::string imgName;
-
 // Simple test function for part1 components
+
+/* NOTE: Some variables were changed
 void test_sphere_parts(const Scene &scene) {
     std::cout << "=== Test Xiaohan's parts ===\n";
     std::cout << "image size : " << img_width << " x " << img_height << "\n";
@@ -56,6 +54,7 @@ void test_sphere_parts(const Scene &scene) {
     }
     std::cout << "=== End test ===\n";
 }
+ */
 
 void test_triangle_parts(const Scene &scene)
 {
@@ -111,6 +110,23 @@ void test_triangle_parts(const Scene &scene)
     std::cout << "=== End triangle test ===\n";
 }
 
+Color rayTrace(const Ray &ray, int max_depth, Scene& scene) {
+    // Base Case: Stop the recursion if max depth is reached
+    if (max_depth <= 0) {
+        return Color(0, 0, 0);
+    }
+
+    bool b_hit = false;
+    HitInfo hit;
+
+    b_hit = FindIntersection(ray, hit);
+    if (b_hit) {
+        return ApplyLighting(scene, ray, hit, max_depth);
+    }
+
+    return scene.background;
+}
+
 int main(int argc, char** argv) {
     // Read command line parameters to get scene file
     if (argc < 2) {
@@ -119,19 +135,27 @@ int main(int argc, char** argv) {
     }
 
     std::string sceneFileName = argv[1];
-
-    // 1. Your parser: build a Scene and get output image info
+    int img_width, img_height;
+    std::string imgName;
+    // parser: build a Scene and get output image info
     Scene scene = parseSceneFile(sceneFileName, img_width, img_height, imgName);
 
-    // 2. Test your components (parsing + camera rays + sphere intersection)
-    test_sphere_parts(scene);
-
-    // 3. Test Triangle part
-    test_triangle_parts(scene);
-
-    // 4. Create an empty image and write it out
-    //    (actual ray tracing and shading can be implemented by teammates)
     Image outputImg = Image(img_width, img_height);
+    float imgW = img_width, imgH = img_height;
+    float halfW = imgW / 2, halfH = imgH / 2;
+    float d = halfH / tanf(scene.camera_fov_ha * (M_PI / 180.0f));
+
+    for (int i = 0; i < img_width; i++) {
+        for (int j = 0; j < img_height; j++) {
+            float u = halfW - i + 0.5;
+            float v = halfH - j + 0.5;
+            Point3 p = scene.camera_pos - d * scene.camera_fwd + u * scene.camera_right + v * scene.camera_up;
+            Ray ray(scene.camera_pos, p - scene.camera_pos);
+            Color result =  rayTrace(ray, scene.max_depth, scene);
+            outputImg.getPixel(i, j) = result;
+        }
+    }
+
     outputImg.write(imgName.c_str());
 
     return 0;

@@ -36,3 +36,5 @@ bool intersectSphere(const Sphere &s,
 
 // Ray-triangle intersection
 double rayTriangleIntersect(const Ray &ray, const Triangle &triangle);
+
+bool FindIntersection(const Ray &ray, HitInfo &hit);

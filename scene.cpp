@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cmath>
 
+
 // Trim leading and trailing whitespace from a string
 static inline void trimInPlace(std::string &s) {
     size_t b = s.find_first_not_of(" \t\r\n");
@@ -15,20 +16,6 @@ static inline void trimInPlace(std::string &s) {
     }
     size_t e = s.find_last_not_of(" \t\r\n");
     s = s.substr(b, e - b + 1);
-}
-
-Direction3 Sphere::get_normal_at_point(const Point3 &p) const {
-    vec3 n = p - center;
-
-    float len2 = n.x * n.x + n.y * n.y + n.z * n.z;
-    if (len2 > 0.0f) {
-        float invLen = 1.0f / std::sqrt(len2);
-        n.x *= invLen;
-        n.y *= invLen;
-        n.z *= invLen;
-    }
-
-    return Direction3(n);
 }
 
 Scene parseSceneFile(const std::string &filename,
@@ -43,8 +30,8 @@ Scene parseSceneFile(const std::string &filename,
     scene.camera_up     = vec3(0, 1, 0);
     scene.camera_fov_ha = 45.0f;
 
-    scene.background    = vec3(0, 0, 0);
-    scene.ambient_light = vec3(0, 0, 0);
+    scene.background    = Color(0, 0, 0);
+    scene.ambient_light = Color(0, 0, 0);
 
     // Default image parameters
     img_width  = 640;
@@ -53,11 +40,11 @@ Scene parseSceneFile(const std::string &filename,
 
     // Default material: 0 0 0  1 1 1  0 0 0  5  0 0 0  1
     Material defaultMat;
-    defaultMat.ambient  = vec3(0, 0, 0);
-    defaultMat.diffuse  = vec3(1, 1, 1);
-    defaultMat.specular = vec3(0, 0, 0);
+    defaultMat.ambient  = Color(0, 0, 0);
+    defaultMat.diffuse  = Color(1, 1, 1);
+    defaultMat.specular = Color(0, 0, 0);
     defaultMat.ns       = 5.0f;
-    defaultMat.trans    = vec3(0, 0, 0);
+    defaultMat.trans    = Color(0, 0, 0);
     defaultMat.ior      = 1.0f;
 
     scene.materials.push_back(defaultMat);
@@ -108,16 +95,16 @@ Scene parseSceneFile(const std::string &filename,
         } else if (key == "camera_fov_ha") {
             ss >> scene.camera_fov_ha;
         } else if (key == "background") {
-            ss >> scene.background.x >> scene.background.y >> scene.background.z;
+            ss >> scene.background.r >> scene.background.g >> scene.background.b;
         } else if (key == "ambient_light") {
-            ss >> scene.ambient_light.x >> scene.ambient_light.y >> scene.ambient_light.z;
+            ss >> scene.ambient_light.r >> scene.ambient_light.g >> scene.ambient_light.b;
         } else if (key == "material") {
             Material m;
-            ss >> m.ambient.x >> m.ambient.y >> m.ambient.z
-               >> m.diffuse.x >> m.diffuse.y >> m.diffuse.z
-               >> m.specular.x >> m.specular.y >> m.specular.z
+            ss >> m.ambient.r >> m.ambient.g >> m.ambient.b
+               >> m.diffuse.r >> m.diffuse.g >> m.diffuse.b
+               >> m.specular.r >> m.specular.g >> m.specular.b
                >> m.ns
-               >> m.trans.x >> m.trans.y >> m.trans.z
+               >> m.trans.r >> m.trans.g >> m.trans.b
                >> m.ior;
             scene.materials.push_back(m);
             currentMatId = (int)scene.materials.size() - 1;
@@ -194,11 +181,50 @@ Scene parseSceneFile(const std::string &filename,
             t.material_id = currentMatId;
             scene.triangles.push_back(t);
 
-        } else {
-            // Other keys (vertex, triangle, lights, etc.) are left for teammates
-            // Chandan's Comment : Updated Triange and Normalized Triangle Part
+        }
+        /*                                          TODO: To be Implemented by Adrian
+        else if (key == "directional_light") {
+            float r, g, b, x, y, z;
+            ss >> r >> g >> b >> x >> y >> z;
+            DirectionalLight light;
+            light.color = vec3(r, g, b);
+            light.dir   = vec3(x, y, z);
+            scene.lights.push_back(light);
+        } else if (key == "point_light") {
+            float r, g, b, x, y, z;
+            ss >> r >> g >> b >> x >> y >> z;
+            PointLight light;
+            light.color = vec3(r, g, b);
+            light.pos   = vec3(x, y, z);
+            scene.lights.push_back(light);
+        } else if (key == "spot_light") {
+            float r, g, b, x, y, z, dir_x, dir_y, dir_z, angle1, angle2;
+            ss >> r >> g >> b >> x >> y >> z >> dir_x >> dir_y >> dir_z >> angle1 >> angle2;
+            SpotLight light;
+            light.color = vec3(r, g, b);
+            light.pos   = vec3(x, y, z);
+            light.dir   = vec3(dir_x, dir_y, dir_z);
+            light.angle1 = angle1;
+            light.angle2 = angle2;
+            scene.lights.push_back(light);
+        }
+         */
+        else if (key == "max_depth"){
+            ss >> scene.max_depth;
+        }
+        else {
+            std::cerr << "Warning: unknown key " << key << " in " << filename << std::endl;
         }
     }
+
+    Direction3 right = cross(scene.camera_up, scene.camera_fwd).normalized();
+
+    // calculate up again using forward and right which we are sure are orthogonal
+    scene.camera_up = cross(scene.camera_fwd, right).normalized();
+
+    scene.camera_fwd = scene.camera_fwd.normalized();
+
+    scene.camera_right = right;
 
     return scene;
 }
@@ -224,4 +250,26 @@ Direction3 Triangle::get_normal_at_point(const Point3 &p) const
 
     vec3 n = normalize3(b1 * n1 + b2 * n2 + b3 * n3);
     return Direction3(n);
+}
+
+Direction3 Sphere::get_normal_at_point(const Point3 &p) const {
+    vec3 n = p - center;
+
+    float len2 = n.x * n.x + n.y * n.y + n.z * n.z;
+    if (len2 > 0.0f) {
+        float invLen = 1.0f / std::sqrt(len2);
+        n.x *= invLen;
+        n.y *= invLen;
+        n.z *= invLen;
+    }
+
+    return Direction3(n);
+}
+
+int Sphere::getMaterialID() const {
+    return material_id;
+}
+
+int Triangle::getMaterialID() const {
+    return material_id;
 }

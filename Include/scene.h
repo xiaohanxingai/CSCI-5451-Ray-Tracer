@@ -3,18 +3,30 @@
 #include <vector>
 #include <string>
 #include "types.h"
+#include "image_lib.h"
 
 // ----------------- Material -----------------
 struct Material {
-    Color3 ambient;   // ar, ag, ab
-    Color3 diffuse;   // dr, dg, db
-    Color3 specular;  // sr, sg, sb
+    Color ambient;   // ar, ag, ab
+    Color diffuse;   // dr, dg, db
+    Color specular;  // sr, sg, sb
     float  ns;        // phong exponent
-    Color3 trans;     // tr, tg, tb
+    Color trans;     // tr, tg, tb
     float  ior;       // index of refraction
 };
 
+struct HitInfo {
+    float distance;
+    Point3 point;
+    Direction3 normal;
+    Material material;
+
+    HitInfo() : distance(INFINITY) {}
+    HitInfo(float distance, Point3 point, Direction3 normal, Material material) : distance(distance), point(point), normal(normal), material(material) {}
+};
+
 struct Primitive {
+    virtual int getMaterialID() const = 0;
     virtual Direction3 get_normal_at_point(const Point3 &p) const = 0;
 };
 
@@ -24,6 +36,7 @@ struct Sphere : public Primitive {
     float     radius;
     int       material_id;   // index into Scene::materials
 
+    int getMaterialID() const override;
     // normal at a point on the surface
     Direction3 get_normal_at_point(const Point3 &p) const override;
 };
@@ -36,6 +49,7 @@ struct Triangle : public Primitive {
     bool flat = true;  // true -> flat triangle else false
     int material_id;
 
+    int getMaterialID() const override;
     Direction3 get_normal_at_point(const Point3 &p) const override;
 };
 
@@ -45,11 +59,16 @@ struct Scene {
     Point3     camera_pos;
     Direction3 camera_fwd;
     Direction3 camera_up;
+    Direction3 camera_right;
     float      camera_fov_ha;
 
     // global settings
-    Color3 background;
-    Color3 ambient_light;
+    Color background;
+    Color ambient_light;
+    int max_depth;
+
+    // TODO: By Adrian
+    // std::vector<Light> lights;
 
     // materials & primitives
     std::vector<Material> materials;

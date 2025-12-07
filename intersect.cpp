@@ -55,3 +55,9 @@ double rayTriangleIntersect(const Ray &ray, const Triangle &triangle)
 
     return INF;
 }
+
+bool FindIntersection(const Ray &ray, HitInfo &hit) {
+    // TODO: To be done by Neil
+    return false;
+}
+
