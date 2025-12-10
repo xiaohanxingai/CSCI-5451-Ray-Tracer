@@ -73,12 +73,14 @@ Color ApplyLighting(const Scene& scene,
                     HitInfo &hit,
                     int depth) {
     Color color = hit.material->ambient * scene.ambient_light;
+
     for (Light* light : scene.lights) {
         color = color + light->getContribution(scene, ray, hit);
     }
-    Ray refraction = Refract(ray, hit);
-    color = color + hit.material->trans * rayTrace(refraction, depth - 1, scene);
-    Ray reflection = Reflect(ray, hit);
-    color = color + hit.material->specular * rayTrace(reflection, depth - 1, scene);
+
+    // Ray refraction = Refract(ray, hit);
+    // color = color + hit.material->trans * rayTrace(refraction, depth - 1, scene);
+    // Ray reflection = Reflect(ray, hit);
+    // color = color + hit.material->specular * rayTrace(reflection, depth - 1, scene);
     return color;
 }

@@ -13,6 +13,7 @@
 #include "Include/scene.h"
 #include <iostream>
 #include <string>
+#include <omp.h>
 
 
 int main(int argc, char** argv) {
@@ -33,6 +34,9 @@ int main(int argc, char** argv) {
     float halfW = imgW / 2, halfH = imgH / 2;
     float d = halfH / tanf(scene.camera_fov_ha * (M_PI / 180.0f));
 
+    // OpenMP Implementation
+    omp_set_dynamic(0); // makes OpenMP not adapt to current resources, always use max.
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < img_width; i++) {
         for (int j = 0; j < img_height; j++) {
             float u = halfW - i + 0.5;

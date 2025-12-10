@@ -21,8 +21,7 @@ struct Scene {
 
     std::vector<Light*> lights;
 
-    // materials & primitives
-    std::vector<Material*> materials;
+    // primitives
     std::vector<Sphere*>   spheres;
     std::vector<Triangle*>   triangles;
 

@@ -98,6 +98,7 @@ Scene parseSceneFile(const std::string &filename,
         } else if (key == "ambient_light") {
             ss >> scene.ambient_light.r >> scene.ambient_light.g >> scene.ambient_light.b;
         } else if (key == "material") {
+            material = new Material;
             ss >> material->ambient.r >> material->ambient.g >> material->ambient.b
                >> material->diffuse.r >> material->diffuse.g >> material->diffuse.b
                >> material->specular.r >> material->specular.g >> material->specular.b
