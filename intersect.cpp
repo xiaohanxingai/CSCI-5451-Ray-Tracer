@@ -32,12 +32,11 @@ double rayTriangleIntersect(const Ray &ray, const Triangle &triangle)
     const double INF = std::numeric_limits<double>::infinity();
 
     vec3 n = triangle.triPlane;
-
     double denom = dot(n, ray.dir);
     if (std::fabs(denom) < 1e-7) return INF;
 
     double t = dot(n, triangle.v1 - ray.origin) / denom;
-    if (t < 0.0) return INF;
+    if (t < 1e-4) return INF;
 
     vec3 hitPoint = ray.origin + ray.dir * (float)t;
 
@@ -45,12 +44,14 @@ double rayTriangleIntersect(const Ray &ray, const Triangle &triangle)
     vec3 c2 = cross(triangle.v3 - triangle.v2, hitPoint - triangle.v2);
     vec3 c3 = cross(triangle.v1 - triangle.v3, hitPoint - triangle.v3);
 
-    if (dot(c1, n) >= 0.0f &&
-        dot(c2, n) >= 0.0f &&
-        dot(c3, n) >= 0.0f)
+    float d1 = dot(c1, n);
+    float d2 = dot(c2, n);
+    float d3 = dot(c3, n);
+
+    if ( (d1 >= 0 && d2 >= 0 && d3 >= 0) ||
+         (d1 <= 0 && d2 <= 0 && d3 <= 0) )
     {
-        double distance = dot((hitPoint - ray.origin), ray.dir);
-        if (distance >= 0.0) return distance;
+        return t;
     }
 
     return INF;
