@@ -5,12 +5,8 @@
 #include "scene.h"
 
 // Ray-sphere intersection.
-// Returns true if there is a hit in [t_min, t_max] and writes the hit distance to t_hit.
-bool intersectSphere(const Sphere &s,
-                     const Ray   &ray,
-                     float t_min,
-                     float t_max,
-                     float &t_hit);
+// Returns distance to intersection or infinity if no hit.
+double intersectSphere(const Ray &ray, const Sphere &s);
 
 // Ray-triangle intersection
 double rayTriangleIntersect(const Ray &ray, const Triangle &triangle);

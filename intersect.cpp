@@ -1,30 +1,29 @@
 #include "Include/intersect.h"
 #include <limits>
 
-bool intersectSphere(const Sphere &s,
-                     const Ray   &ray,
-                     float t_min,
-                     float t_max,
-                     float &t_hit) {
+double intersectSphere(const Ray &ray, const Sphere &s) {
+    const double INF = std::numeric_limits<double>::infinity();
+    
     vec3 oc = ray.origin - s.center;
     float a = dot(ray.dir, ray.dir);
     float b = 2.0f * dot(oc, ray.dir);
     float c = dot(oc, oc) - s.radius * s.radius;
     float disc = b*b - 4.0f*a*c;
-    if (disc < 0.0f) return false;
+    
+    if (disc < 0.0f) return INF;
 
     float sqrtD = std::sqrt(disc);
     float t0 = (-b - sqrtD) / (2.0f * a);
     float t1 = (-b + sqrtD) / (2.0f * a);
 
+
     float t = t0;
-    if (t < t_min || t > t_max) {
+    if (t < 1e-4) {
         t = t1;
-        if (t < t_min || t > t_max) return false;
+        if (t < 1e-4) return INF;
     }
 
-    t_hit = t;
-    return true;
+    return (double)t;
 }
 
 double rayTriangleIntersect(const Ray &ray, const Triangle &triangle)
@@ -64,11 +63,13 @@ bool FindIntersection(const Scene &scene, const Ray &ray, HitInfo &hit) {
 
     // 1. Check Spheres
     for (const auto& sphere : scene.spheres) {
-        float t_hit_sphere;
-        // Pass closest_t as t_max to automatically prune further intersections
-        if (intersectSphere(*sphere, ray, t_min, closest_t, t_hit_sphere)) {
-            closest_t = t_hit_sphere;
-            closest_prim = sphere;
+        double t_d = intersectSphere(ray, *sphere); 
+        if (t_d != std::numeric_limits<double>::infinity()) {
+            float t_f = (float)t_d;
+            if (t_f > t_min && t_f < closest_t) {
+                closest_t = t_f;
+                closest_prim = sphere;
+            }
         }
     }
 
