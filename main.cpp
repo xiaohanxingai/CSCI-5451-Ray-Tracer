@@ -13,7 +13,8 @@
 #include "Include/scene.h"
 #include <iostream>
 #include <string>
-#include <omp.h>
+#include <chrono>
+#include <iomanip>
 
 int main(int argc, char** argv) {
     // Read command line parameters to get scene file
@@ -33,9 +34,8 @@ int main(int argc, char** argv) {
     float halfW = imgW / 2, halfH = imgH / 2;
     float d = halfH / tanf(scene.camera_fov_ha * (M_PI / 180.0f));
 
-    // OpenMP Implementation
-    omp_set_dynamic(0); // makes OpenMP not adapt to current resources, always use max.
-    #pragma omp parallel for collapse(2)
+    auto t_total_start = std::chrono::steady_clock::now();
+    
     for (int i = 0; i < img_width; i++) {
         for (int j = 0; j < img_height; j++) {
             float u = halfW - i + 0.5;
@@ -46,6 +46,12 @@ int main(int argc, char** argv) {
             outputImg.getPixel(i, j) = result;
         }
     }
+
+    auto t_total_end = std::chrono::steady_clock::now();
+    auto total_ms = std::chrono::duration<double, std::milli>(t_total_end - t_total_start).count();
+
+    std::cout << std::fixed << std::setprecision(3);
+    std::cout << "\n[TIMING] total: " << total_ms << " ms\n\n";
 
     outputImg.write(imgName.c_str());
 
@@ -66,3 +72,4 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
