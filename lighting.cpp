@@ -8,13 +8,13 @@
 Color DirectionalLight::getContribution(const Scene& scene, const Ray& ray, HitInfo& hit) {
     Color final_color(0, 0, 0);
     Point3 hit_point_tolerated = hit.point + hit.normal.normalized() * 1e-4f;
-    Ray shadowRay(hit_point_tolerated, -1 * direction);
+    Ray shadowRay(hit_point_tolerated, -direction);
     bool b_hit = false;
     HitInfo shadowHit;
     b_hit = FindIntersection(scene, shadowRay, shadowHit);
     if (!b_hit) {
-        final_color = final_color + hit.material->diffuse * color * std::max(0.0f, dot(hit.normal.normalized(), -1 * direction.normalized()));
-        Direction3 h = ((-1 * direction) - ray.dir).normalized();
+        final_color = final_color + hit.material->diffuse * color * std::max(0.0f, dot(hit.normal.normalized(), -direction.normalized()));
+        Direction3 h = (-direction - ray.dir).normalized();
         final_color = final_color + hit.material->specular * color * pow(std::max(0.0f, dot(hit.normal.normalized(), h)), hit.material->ns);
     }
     return final_color;

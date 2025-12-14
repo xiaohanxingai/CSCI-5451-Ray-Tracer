@@ -23,7 +23,7 @@ double intersectSphere(const Ray &ray, const Sphere &s) {
         if (t < 1e-4) return INF;
     }
 
-    return (double)t;
+    return t;
 }
 
 double rayTriangleIntersect(const Ray &ray, const Triangle &triangle)
