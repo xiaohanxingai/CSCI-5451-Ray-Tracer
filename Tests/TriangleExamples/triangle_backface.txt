@@ -1,0 +1,16 @@
+camera_pos: 0 0 -6
+camera_fwd: 0 0 -1
+camera_up: 0 1 0
+camera_fov_ha: 28
+output_image: triangle_backface.png
+
+max_vertices: 3
+vertex: -1 1 3
+vertex: 1 1 3
+vertex: 0 -1 3
+
+material: .5 1 .5 .5 1 .5 .2 .2 .2 20 0 0 0 1
+triangle: 0 1 2
+
+point_light: 0 4 -4 0 3 -4
+background: .05 .05 .05

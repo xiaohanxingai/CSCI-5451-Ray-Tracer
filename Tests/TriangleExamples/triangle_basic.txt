@@ -1,0 +1,16 @@
+camera_pos: 0 0 -5
+camera_fwd: 0 0 -1
+camera_up: 0 1 0
+camera_fov_ha: 30
+output_image: triangle_basic.png
+
+max_vertices: 3
+vertex: -1 -1 2
+vertex: 1 -1 2
+vertex: 0 1 2
+
+material: 1 1 0 1 1 0 .2 .2 .2 16 0 0 0 1
+triangle: 0 1 2
+
+point_light: 2 4 -3 0 3 -4
+background: .1 .1 .2

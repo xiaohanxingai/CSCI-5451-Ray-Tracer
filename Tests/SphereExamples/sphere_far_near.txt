@@ -1,0 +1,15 @@
+camera_pos: 0 0 -15
+camera_fwd: 0 0 -1
+camera_up: 0 1 0
+camera_fov_ha: 35
+output_image: sphere_far_near.png
+
+material: .9 .9 .1 .9 .9 .1 .2 .2 .2 32 0 0 0 1
+sphere: -2 0 3 1
+
+material: .1 .1 .9 .1 .1 .9 .2 .2 .2 32 0 0 0 1
+sphere: 2 0 10 3
+
+point_light: 8 4 -8 0 5 -5
+ambient_light: .2 .2 .2
+background: .1 .1 .1

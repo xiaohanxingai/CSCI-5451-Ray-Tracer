@@ -1,0 +1,15 @@
+camera_pos: 0 0 -10
+camera_fwd: 0 0 -1
+camera_up: 0 1 0
+camera_fov_ha: 30
+output_image: sphere_overlap.png
+
+material: 1 0 0 1 0 0 .2 .2 .2 32 0 0 0 1
+sphere: 0 0 4 2
+
+material: 0 0 1 0 0 1 .2 .2 .2 32 0 0 0 1
+sphere: 0 0 6 2
+
+point_light: 5 5 5 0 5 -5
+ambient_light: .2 .2 .2
+background: .05 .05 .05

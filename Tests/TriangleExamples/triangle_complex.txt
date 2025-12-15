@@ -1,0 +1,20 @@
+camera_pos: 0 1 -8
+camera_fwd: 0 -0.1 -1
+camera_up: 0 1 0
+camera_fov_ha: 30
+output_image: triangle_complex.png
+
+max_vertices: 6
+vertex: -2 -1 4
+vertex: 0 -1 5
+vertex: 2 -1 4
+vertex: -2 2 6
+vertex: 0 2 7
+vertex: 2 2 6
+
+material: .7 .7 .2 .7 .7 .2 .2 .2 .2 20 0 0 0 1
+triangle: 0 1 2
+triangle: 3 4 5
+
+point_light: 6 8 -6 0 5 -5
+background: .1 .1 .15

@@ -1,0 +1,15 @@
+camera_pos: 0 1 -12
+camera_fwd: 0 0 -1
+camera_up: 0 1 0
+camera_fov_ha: 30
+output_image: sphere_stack.png
+
+material: .8 .2 .2 .8 .2 .2 .2 .2 .2 32 0 0 0 1
+sphere: 0 -1 5 2
+
+material: .2 .8 .2 .2 .8 .2 .2 .2 .2 32 0 0 0 1
+sphere: 0 2 6 2
+
+point_light: 6 6 -6 0 5 -5
+ambient_light: .2 .2 .2
+background: .05 .05 .05
