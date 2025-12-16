@@ -12,7 +12,7 @@ struct Scene {
     Direction3 camera_fwd;
     Direction3 camera_up;
     Direction3 camera_right;
-    float      camera_fov_ha;
+    double      camera_fov_ha;
 
     // global settings
     Color background;

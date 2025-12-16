@@ -21,39 +21,39 @@ Color rayTrace(Ray &ray, const int max_depth, const Scene& scene) {
 }
 
 Ray Reflect(Ray &ray, HitInfo& hit){
-    vec3 d = ray.dir.normalized();
-    vec3 n = hit.normal.normalized();
+    Direction3 d = ray.dir.normalized();
+    Direction3 n = hit.normal.normalized();
 
-    vec3 reflected_dir = d - 2.0f * dot(d, n) * n;
+    Direction3 reflected_dir = d - 2.0 * dot(d, n) * n;
 
-    return Ray(hit.point + reflected_dir * 0.001f, reflected_dir.normalized());
+    return Ray(hit.point + reflected_dir * 0.001, reflected_dir.normalized());
 }
 
 Ray Refract(Ray &ray, HitInfo& hit){
-    vec3 I = ray.dir.normalized();
-    vec3 N = hit.normal.normalized();
+    Direction3 I = ray.dir.normalized();
+    Direction3 N = hit.normal.normalized();
 
-    float ior = hit.material->ior;
-    float cos_theta = dot(I, N);
-    float eta;
-    vec3 n_eff;
+    double ior = hit.material->ior;
+    double cos_theta = dot(I, N);
+    double eta;
+    Direction3 n_eff;
 
     if (cos_theta > 0) {
         eta = ior;
-        n_eff = -1.0f * N;
+        n_eff = -1.0 * N;
     } else {
-        eta = 1.0f / ior;
+        eta = 1.0 / ior;
         n_eff = N;
         cos_theta = -cos_theta;
     }
 
-    float k = 1.0f - eta * eta * (1.0f - cos_theta * cos_theta);
+    double k = 1.0 - eta * eta * (1.0 - cos_theta * cos_theta);
 
     if (k < 0) {
         return Reflect(ray, hit); 
     }
 
-    vec3 T = eta * I + (eta * cos_theta - std::sqrt(k)) * n_eff;
+    Direction3 T = eta * I + (eta * cos_theta - std::sqrt(k)) * n_eff;
 
-    return Ray(hit.point + T * 0.001f, T.normalized());
+    return Ray(hit.point + T * 0.001, T.normalized());
 }

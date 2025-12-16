@@ -8,19 +8,19 @@ struct Material {
     Color ambient;   // ar, ag, ab
     Color diffuse;   // dr, dg, db
     Color specular;  // sr, sg, sb
-    float  ns;        // phong exponent
+    double  ns;        // phong exponent
     Color trans;     // tr, tg, tb
-    float  ior;       // index of refraction
+    double  ior;       // index of refraction
 };
 
 struct HitInfo {
-    float distance;
+    double distance;
     Point3 point;
     Direction3 normal;
     Material* material;
 
     HitInfo() : distance(INFINITY) {}
-    HitInfo(float distance, Point3 point, Direction3 normal, Material* material) : distance(distance), point(point), normal(normal), material(material) {}
+    HitInfo(double distance, Point3 point, Direction3 normal, Material* material) : distance(distance), point(point), normal(normal), material(material) {}
 };
 
 struct Primitive {
@@ -31,7 +31,7 @@ struct Primitive {
 // ----------------- Sphere -----------------
 struct Sphere : public Primitive {
     Point3    center;
-    float     radius;
+    double     radius;
     Material*     material;   // index into Scene::materials
 
     Material* getMaterial() const override;

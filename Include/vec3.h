@@ -4,16 +4,16 @@
 #include <iostream>
 
 using std::sqrt;
-using std::fmin;
+using std::min;
 using std::max;
 
 //Small vector library
-// Represents a vector as 3 floats
+// Represents a vector as 3 doubles
 
 struct vec3{
-  float x,y,z;
+  double x,y,z;
 
-  vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+  vec3(double x, double y, double z) : x(x), y(y), z(z) {}
   vec3() : x(0), y(0), z(0) {}
   vec3 operator-() const {
         return vec3(-x, -y, -z);
@@ -24,25 +24,25 @@ struct vec3{
   }
 
   //Compute vector length (you may also want length squared)
-  float length(){
+  double length(){
     return sqrt(x*x+y*y+z*z);
   }
 
   //Create a unit-length vector
   vec3 normalized(){
-    float len = sqrt(x*x+y*y+z*z);
+    double len = sqrt(x*x+y*y+z*z);
     return vec3(x/len,y/len,z/len);
   }
 
 };
 
-//Multiply float and vector
-inline vec3 operator*(float f, vec3 a){
+//Multiply double and vector
+inline vec3 operator*(double f, vec3 a){
   return vec3(a.x*f,a.y*f,a.z*f);
 }
 
 //Vector-vector dot product
-inline float dot(vec3 a, vec3 b){
+inline double dot(vec3 a, vec3 b){
   return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
@@ -62,12 +62,12 @@ inline vec3 operator-(vec3 a, vec3 b){
 }
 
 // Useful for optimization (avoids expensive sqrt)
-inline float length_squared(const vec3& v) {
+inline double length_squared(const vec3& v) {
     return v.x * v.x + v.y * v.y + v.z * v.z;
 }
 
-// Allow vec * float
-inline vec3 operator*(const vec3& a, float f) {
+// Allow vec * double
+inline vec3 operator*(const vec3& a, double f) {
     return vec3(a.x * f, a.y * f, a.z * f);
 }
 
