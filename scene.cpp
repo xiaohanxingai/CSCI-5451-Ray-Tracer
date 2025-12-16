@@ -26,10 +26,10 @@ Scene parseSceneFile(const std::string &filename,
     Scene scene;
 
     // Default camera and global settings
-    scene.camera_pos    = vec3(0, 0, 0);
-    scene.camera_fwd    = vec3(0, 0, -1);
-    scene.camera_up     = vec3(0, 1, 0);
-    scene.camera_fov_ha = 45.0f;
+    scene.camera_pos    = Direction3(0, 0, 0);
+    scene.camera_fwd    = Direction3(0, 0, -1);
+    scene.camera_up     = Direction3(0, 1, 0);
+    scene.camera_fov_ha = 45.0;
 
     scene.background    = Color(0, 0, 0);
     scene.ambient_light = Color(0, 0, 0);
@@ -46,9 +46,9 @@ Scene parseSceneFile(const std::string &filename,
     material->ambient  = Color(0, 0, 0);
     material->diffuse  = Color(1, 1, 1);
     material->specular = Color(0, 0, 0);
-    material->ns       = 5.0f;
+    material->ns       = 5.0;
     material->trans    = Color(0, 0, 0);
-    material->ior      = 1.0f;
+    material->ior      = 1.0;
 
     scene.materials.push_back(material);
 
@@ -113,10 +113,10 @@ Scene parseSceneFile(const std::string &filename,
             scene.materials.push_back(material);
 
         } else if (key == "sphere") {
-            float x, y, z, r;
+            double x, y, z, r;
             ss >> x >> y >> z >> r;
             Sphere* s = new Sphere;
-            s->center      = vec3(x, y, z);
+            s->center      = Point3(x, y, z);
             s->radius      = r;
             s->material = material;
             scene.spheres.push_back(s);
@@ -129,23 +129,23 @@ Scene parseSceneFile(const std::string &filename,
             if (max_normals < 0) max_normals = 0;
             scene.normals.reserve(max_normals);
         } else if (key == "vertex") {
-            float x, y, z;
+            double x, y, z;
             ss >> x >> y >> z;
             if (max_vertices > 0 &&
                 (int)scene.vertices.size() >= max_vertices) {
                 std::cerr << "Warning: more vertices than max_vertices in "
                           << filename << std::endl;
             }
-            scene.vertices.push_back(vec3(x, y, z));
+            scene.vertices.push_back(Point3(x, y, z));
         } else if (key == "normal") {
-            float x, y, z;
+            double x, y, z;
             ss >> x >> y >> z;
             if (max_normals > 0 &&
                 (int)scene.normals.size() >= max_normals) {
                 std::cerr << "Warning: more normals than max_normals in "
                           << filename << std::endl;
             }
-            scene.normals.push_back(vec3(x, y, z));
+            scene.normals.push_back(Direction3(x, y, z));
         } else if (key == "triangle") {
             int v0, v1, v2;
             ss >> v0 >> v1 >> v2;
@@ -155,7 +155,7 @@ Scene parseSceneFile(const std::string &filename,
             t->v2 = scene.vertices[v1];
             t->v3 = scene.vertices[v2];
 
-            vec3 fn = cross(t->v2 - t->v1, t->v3 - t->v1).normalized();
+            Direction3 fn = cross(t->v2 - t->v1, t->v3 - t->v1).normalized();
             t->triPlane = Direction3(fn);
 
             t->n1 = t->n2 = t->n3 = t->triPlane;
@@ -177,7 +177,7 @@ Scene parseSceneFile(const std::string &filename,
             t->n2 = scene.normals[n1];
             t->n3 = scene.normals[n2];
 
-            vec3 fn = cross(t->v2 - t->v1, t->v3 - t->v1).normalized();
+            Direction3 fn = cross(t->v2 - t->v1, t->v3 - t->v1).normalized();
             t->triPlane = Direction3(fn);
 
             t->flat = false;
@@ -186,17 +186,17 @@ Scene parseSceneFile(const std::string &filename,
             scene.triangles.push_back(t);
         }
         else if (key == "directional_light") {
-            float r, g, b, x, y, z;
+            double r, g, b, x, y, z;
             ss >> r >> g >> b >> x >> y >> z;
             Light* light = new DirectionalLight(Color(r,g,b), Direction3(x, y, z));
             scene.lights.push_back(light);
         } else if (key == "point_light") {
-            float r, g, b, x, y, z;
+            double r, g, b, x, y, z;
             ss >> r >> g >> b >> x >> y >> z;
             Light* light = new PointLight(Color(r,g,b), Point3(x, y, z));
             scene.lights.push_back(light);
         } else if (key == "spot_light") {
-            float r, g, b, x, y, z, dir_x, dir_y, dir_z, angle1, angle2;
+            double r, g, b, x, y, z, dir_x, dir_y, dir_z, angle1, angle2;
             ss >> r >> g >> b >> x >> y >> z >> dir_x >> dir_y >> dir_z >> angle1 >> angle2;
             Light* light = new SpotLight(Color(r,g,b), Point3(x, y, z), Direction3(dir_x, dir_y, dir_z), angle1, angle2);
             scene.lights.push_back(light);
@@ -209,14 +209,12 @@ Scene parseSceneFile(const std::string &filename,
         }
     }
 
-    Direction3 right = cross(scene.camera_up, scene.camera_fwd).normalized();
+    scene.camera_right = cross(scene.camera_up, scene.camera_fwd).normalized();
 
     // calculate up again using forward and right which we are sure are orthogonal
-    scene.camera_up = cross(scene.camera_fwd, right).normalized();
+    scene.camera_up = cross(scene.camera_fwd, scene.camera_right).normalized();
 
     scene.camera_fwd = scene.camera_fwd.normalized();
-
-    scene.camera_right = right;
 
     return scene;
 }
