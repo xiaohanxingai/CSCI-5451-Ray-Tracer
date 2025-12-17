@@ -14,7 +14,7 @@ Steps to compile and test on Plate server:
    cd CSCI-5451-Ray-Tracer
 
 4. Compile the code
-   g++ -std=c++17 -O2 main.cpp rayTrace.cpp scene.cpp lighting.cpp intersect.cpp primitive.cpp -I Include -o raytracer
+    g++ -std=c++17 -O2 main.cpp rayTrace.cpp scene.cpp lighting.cpp intersect.cpp primitive.cpp -I Include -o raytracer
 
 5. Run a quick test (recommended)
    ./raytracer Tests/arm-top.txt
