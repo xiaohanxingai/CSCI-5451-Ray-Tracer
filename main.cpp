@@ -1,8 +1,6 @@
 // For Visual Studios
-#ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
-#define _USE_MATH_DEFINES 
-#endif
+#define _USE_MATH_DEFINES
 
 // Images Lib includes:
 #define STB_IMAGE_IMPLEMENTATION
