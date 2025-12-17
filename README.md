@@ -18,7 +18,7 @@ This repository contains the OpenMP-Parallel ray tracer implementation.
    ```bash
    cd CSCI-5451-Ray-Tracer
    ```
-4. Cross Verify using command
+4. Cross Verify branch using command
    ```bash
    git branch
    ```
@@ -40,7 +40,7 @@ This repository contains the OpenMP-Parallel ray tracer implementation.
    ./raytracer_omp Tests/InterestingScenes/arm-top.txt
    ```
 
-8. Run a complex scene (slow, but faster than base)
+8. Run a complex scene (slow, but faster than base takes now like 70 seconds)
    ```bash
    ./raytracer_omp Tests/InterestingScenes/dragon.txt
    ```
