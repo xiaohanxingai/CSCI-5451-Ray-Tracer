@@ -1,34 +1,40 @@
-CSCI-5451 Ray Tracer (MPI)
-This repository contains the MPI-parallel ray tracer implementation.
+# CSCI-5451 Ray Tracer (MPI)
 
-Steps to compile and test on Plate server
-Login to Plate
+This repository contains the MPI-Parallel ray tracer implementation.
 
-ssh <your-username>@csel-plate01.cselabs.umn.edu
-(plate02–plate04 are also fine.)
+## Steps to compile and test on PLATE server
 
-Clone the repository
+1. Login to Plate
+   ```bash
+   ssh <your-username>@csel-plate01.cselabs.umn.edu
+   ```
 
-git clone https://github.com/<team-repo>/CSCI-5451-Ray-Tracer.git
-cd CSCI-5451-Ray-Tracer
+2. Clone the repository
+   ```bash
+   git clone --branch MPI --single-branch https://github.com/Agamal17/CSCI-5451-Ray-Tracer.git
+   ```
+   
+3. Navigate to the project directory
+   ```bash
+   cd CSCI-5451-Ray-Tracer
+   ```
+   
+4. Cross Verify branch using command
+   ```bash
+   git branch
+   ```
 
-Compile the MPI version
+5. Compile the code
+   ```bash
+   mpicxx -O3 -march=native -ffast-math -std=c++17 main.cpp rayTrace.cpp scene.cpp lighting.cpp intersect.cpp primitive.cpp -IInclude -IInclude/Image -o raytracer_mpi
+   ```
 
-mpicxx -O3 -std=c++17 main.cpp rayTrace.cpp scene.cpp lighting.cpp intersect.cpp primitive.cpp \
-    -IInclude -IInclude/Image -o ray_mpi
+6. Run a quick test (recommended)
+   ```bash
+   mpirun -np 64 ./raytracer_mpi Tests/InterestingScences/arm-top.txt
+   ```
 
-Run a quick scene (np = 64)
-
-mpirun -np 64 ./ray_mpi Tests/TriangleExamples/triangle.txt
-
-Run a large test (np = 64)
-
-mpirun -np 64 ./ray_mpi Tests/TriangleExamples/test_reasonable.txt
-
-
-
-(Optional) Batch timing with np = 64
-
-./run_mpi_batch.sh
-
-
+7. Run a complex scene
+   ```bash
+   mpirun -np 64 ./raytracer_mpi Tests/InterestingScences/dragon.txt
+   ```
