@@ -65,6 +65,10 @@ Tests/island.txt
 
 Tests/lily.txt
 
+Test/sword.txt
+
+Test/spaceship.txt
+
 (Zip files and large scenes are automatically excluded.)
 
 7. Example timing output
